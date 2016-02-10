@@ -1,0 +1,31 @@
+{
+  "name": "ng-puller",
+  "main": "dist/ng-puller.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/FDIM/ng-puller.git",
+  "authors": [
+    "FDIM <domas.trijonis@gmail.com>"
+  ],
+  "description": "A set of directives allowing you to implement pull to action pattern, either vertically or horizontally.",
+  "keywords": ["angular", "puller", "ng-puller", "pull-to-refresh", "pull-to-reload", "pull-to-action"],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    ".idea",
+    ".gitignore",
+    "node_modules",
+    "tests",
+    "LICENSE",
+    "bower_components",
+    "coverage",
+    "gulpfile.js",
+    "package.json",
+    "*.conf.js"
+  ],
+  "dependencies": {
+    "angular": ">=1.0.8"
+  },
+  "devDependencies": {
+    "angular-mocks": ">=1.0.8"
+  }
+}
