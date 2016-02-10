@@ -1,0 +1,60 @@
+.container {
+  height: 500px;
+  border: 2px solid #C7C7C7;
+  width:300px;
+  overflow: auto;
+  margin-right: 10px;
+  float: left;
+}
+.container ul{
+  padding: 0;
+  margin: 0;
+  list-style: none;;
+}
+.container li {
+    height: 48px;
+    padding: 4px;
+    border-top:1px solid #E8E8E8;
+}
+.container li:first-child{
+  border-top: 0;
+}
+.container li .image {
+  float: left;
+  width: 48px;
+  height: 48px;
+  background: #ccc;
+  margin-right: 8px;
+}
+.container li .content{
+  padding: 2px;
+}
+.container li h3 {
+  font-weight: 100;
+  padding: 0;
+  margin: 0;
+}
+.container li p {
+  padding: 0;
+  margin: 0;
+}
+
+.container.pull-down-active .pull-to-refresh-indicator{
+  transition: none;
+}
+.pull-to-refresh-indicator{
+  height: 0;
+  position: relative;
+  margin-top: 0px;
+}
+.pull-to-refresh-indicator{
+  transition: margin-top ease 0.4s;
+}
+.pull-to-refresh-indicator >div{
+  position: absolute;
+  bottom:0 ;
+  text-align: center;
+  padding: 8px;
+  left:0;
+  right:0;
+}

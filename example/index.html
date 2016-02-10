@@ -3,14 +3,44 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="../dist/ng-puller.css"/>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
   <script src="../bower_components/angular/angular.js" type="text/javascript"></script>
   <script src="../dist/ng-puller.js" type="text/javascript"></script>
   <script src="app.js" type="text/javascript"></script>
 </head>
 
 <body>
+  <h2>Example</h2>
+  <p>Pull down the list below, do not scroll down</p>
+  <p>Pull single item left or right</p>
+  <p>Scroll to bottom and pull up</p>
   <div ng-controller="AppController">
-
+    <div class="container" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($callback)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
+      <div class="pull-to-refresh-indicator" ng-style="{'margin-top':($pullDownProgress/100*60)+'px'}">
+        <div>
+          <div>{{$pullDownProgress|number:2}}</div>
+          <div>Pull down to refresh</div>
+        </div>
+      </div>
+      <ul>
+        <li ng-repeat="i in items" on-pull-left pull-left-distance="80" pull-left-progress="$pullLeftProgress">
+          <div class="image"></div>
+          <div class="content">
+            <h3>{{i.title}}</h3>
+            <p>{{i.intro}}</p>
+          </div>
+        </li>
+      </ul>
+      <div pull-up-container>
+          <div>{{$pullUpProgress|number:2}}</div>
+          <div>Pull up to load more</div>
+      </div>
+    </div>
+    <div class="container">
+      <ul>
+        <li ng-repeat="e in history track by $index">{{e}}</li>
+      </ul>
+    </div>
   </div>
 </body>
 

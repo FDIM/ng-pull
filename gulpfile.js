@@ -7,7 +7,6 @@ var cssmin = require('gulp-cssmin');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var karma = require('karma').server;
-var watch = require('gulp-watch');
 
 var _coverage = 'coverage/**/lcov.info';
 var _scripts = 'src/**/*.js';
@@ -48,10 +47,8 @@ gulp.task('dist', ['build-css'], function () {
         .pipe(gulp.dest(_dist));
 })
 
-gulp.task('watch', function(){
-  return gulp.src("src/**/*")
-    .pipe(watch('src/**/*'))
-    .pipe(gulp.dest('build'));
+gulp.task('watch',['build'], function(){
+    gulp.watch('src/**/*', ['build']);
 });
 
 gulp.task('unit-test', function (done) {

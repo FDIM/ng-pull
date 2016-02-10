@@ -6,6 +6,5 @@
  * ensures that all module declarations occur before any module references.
  */
 (function (module) {
-  var a = 2;
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPuller", [])));
+}(angular.module("ngPuller", ["ngPullerOnPull", "ngPullerContainer", "ngPullerService"])));
