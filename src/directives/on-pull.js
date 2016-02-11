@@ -26,7 +26,8 @@
       Progress:'$pull' + capitalizedDirection + 'Progress',
       Duration: 450,
       Timeout:300,
-      Treshold: 5
+      Threshold: 5,
+      Reset: '$pull'+capitalizedDirection+'Reset'
     };
     return OnPullDirective;
 
@@ -45,33 +46,40 @@
         function link(scope, element, attr, ctrl) {
           var options = normalizeOptions(attr);
           var eventTarget = angular.element($window);
+          var startTime;
+          var wasMoreThanThreshold;
           ctrl.options = options;
           ctrl.suspended = false;
           ctrl.queue.forEach(function(fn) {
             fn();
           });
-          var startTime;
+          scope.$eval(options.reset+'=value',{value:revertProgress});
           element.on(EVENTS.start, pointerDown);
 
           function pointerDown(ev) {
-            if(factory.canBegin(element) && !ctrl.suspended){
+            if(factory.canBegin(element) && !ctrl.suspended && ev.which === 1){
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
               initialEvent = ev;
               startTime = Date.now();
               ctrl.suspended = true;
+              wasMoreThanThreshold = false;
             }
           }
 
           function pointerMove(ev){
             var percent = factory.distance(ev, initialEvent) * 100.0 / (1.0 * options.distance);
-            // cancel intention if user drags below certain treshold until timeout
-            if(percent <= options.treshold && Date.now() - startTime > options.timeout){
+            // cancel intention if user drags below certain threshold until timeout
+            if(percent <= options.threshold && Date.now() - startTime > options.timeout && !wasMoreThanThreshold){
               eventTarget.off(EVENTS.move, pointerMove);
               eventTarget.off(EVENTS.end, pointerUp);
               element.removeClass(activeClassName);
               ctrl.suspended = false;
-              progress = 0;
+              percent = 0;
+            }
+            // if user pulled more than threshold, gesture should not be canceled when value becomes less than threshold
+            if (percent > options.threshold) {
+              wasMoreThanThreshold = true;
             }
             if (percent < 0) {
               percent = 0;
@@ -85,9 +93,13 @@
             scope.$eval(options.progress+'=value',{
               value: percent
             });
-            // special case for up and right
+            // special case for up
             if(direction === 'up'){
               element.prop('scrollTop',element.prop('scrollTop')+options.distance);
+            }
+            // special case for right
+            if(direction === 'right'){
+              element.prop('scrollLeft',element.prop('scrollLeft')+options.distance);
             }
             scope.$apply();
           }
@@ -99,7 +111,7 @@
             // execute expression and depending on its outcome revert progress
             // no expression = always revert progress when gesture is done
             if(options.expression && scope.$eval(options.progress)>=100){
-                if(scope.$eval(options.expression, {$callback:revertProgress})!==false) {
+                if(scope.$eval(options.expression, {$reset:revertProgress})!==false) {
                   revertProgress();
                 }
             } else {

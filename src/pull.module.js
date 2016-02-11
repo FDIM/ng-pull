@@ -7,4 +7,4 @@
  */
 (function (module) {
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPull", ["ngOnPull", "ngPullContainer", "ngPullService"])));
+}(angular.module("ngPull", ["ngOnPull", "ngPullContainer", "ngPullTarget", "ngPullService"])));

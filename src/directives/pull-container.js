@@ -29,6 +29,9 @@
         function link(scope, element, attr, pullCtrl) {
           pullCtrl.queue.push(function(){
             element.addClass('pull-'+direction+'-container');
+            if(direction ==='left' || direction ==='right'){
+              element.children()[0].style.width = pullCtrl.options.distance + 'px';
+            }
             scope.$watch(pullCtrl.options.progress, function(newValue) {
               element[0].style[factory.cssProp] = (newValue / 100 * pullCtrl.options.distance)+'px';
             })

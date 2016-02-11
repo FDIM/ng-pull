@@ -32,18 +32,18 @@
         return element.prop('scrollLeft') === 0;
       },
       distance: function(newEvent, oldEvent) {
-        return newEvent.clientX - oldEvent.clientX;
+        return oldEvent.clientX - newEvent.clientX;
       },
-      cssProp:'margin-left'
+      cssProp:'width'
     },
     right:{
       canBegin: function(element) {
         return element.prop('scrollLeft') === element.prop('scrollWidth') - element.prop('clientWidth');
       },
       distance: function(newEvent, oldEvent) {
-        return oldEvent.clientX - newEvent.clientX;
+        return newEvent.clientX - oldEvent.clientX;
       },
-      cssProp:'margin-right'
+      cssProp:'width'
     }
   };
 

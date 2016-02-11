@@ -10,9 +10,15 @@
       $scope.items = [];
       $scope.history = [];
       $scope.loadingMore = false;
+
+      for(var i =0; i< 100; i++){
+        $scope.items.push({title:"item "+i, intro:'intro '+i});
+      }
+
       $scope.loadNewItems = function() {
         $scope.history.push("load new items");
       }
+
       $scope.loadMoreItems = function(cancel) {
         $scope.history.push("loading more items");
         $scope.loadingMore = true;
@@ -23,8 +29,15 @@
         }, 2000);
         return false;
       }
-      for(var i =0; i< 100; i++){
-        $scope.items.push({title:"item "+i, intro:'intro '+i});
+
+      $scope.removeItem = function(item) {
+        $scope.items.splice($scope.items.indexOf(item),1);
+        $scope.history.push("removed "+item.title);
+      }
+
+      $scope.archiveItem = function(item) {
+        $scope.items.splice($scope.items.indexOf(item),1);
+        $scope.history.push("archived "+item.title);
       }
   }]);
 

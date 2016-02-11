@@ -12,22 +12,40 @@
 <body>
   <h2>Example</h2>
   <p>Pull down the list below, do not scroll down</p>
-  <p>Pull single item left or right</p>
+  <p>Pull single item left to be prompted to delete</p>
+  <p>Pull single item right archive</p>
   <p>Scroll to bottom and pull up</p>
   <div ng-controller="AppController">
-    <div class="container" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($callback)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
+    <div class="container" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
       <div class="pull-to-refresh-indicator" ng-style="{'margin-top':($pullDownProgress/100*60)+'px'}">
         <div>
           <div>{{$pullDownProgress|number:2}}</div>
           <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
         </div>
       </div>
+      <!-- or -->
+      <!-- <div pull-down-container>
+          <div>{{$pullDownProgress|number:2}}</div>
+          <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
+      </div> -->
       <ul>
-        <li ng-repeat="i in items" on-pull-left pull-left-distance="80" pull-left-progress="$pullLeftProgress">
-          <div class="image"></div>
-          <div class="content">
-            <h3>{{i.title}}</h3>
-            <p>{{i.intro}}</p>
+        <li ng-repeat="i in items" on-pull-left="false" pull-left-distance="120" pull-left-reset="$cancelDelete" pull-left-progress="$pullLeftProgress" on-pull-right="archiveItem(i)" pull-right-distance="150">
+          <div pull-right-container>
+            <p style="padding-top:20px; text-align:right;">{{$pullRightProgress|number:2}} archived</p>
+          </div>
+          <div pull-target>
+            <div class="image"></div>
+            <div class="content">
+              <h3>{{i.title}}</h3>
+              <p>{{i.intro}}</p>
+            </div>
+          </div>
+          <div pull-left-container>
+            <p style="padding-top:20px;" ng-if="$pullLeftProgress<100">{{$pullLeftProgress|number:2}} deleted</p>
+            <p style="padding-top:20px;" ng-if="$pullLeftProgress==100">
+              <button ng-click="$cancelDelete(i)">cancel</button>
+              <button ng-click="removeItem(i)">delete</button>
+            </p>
           </div>
         </li>
       </ul>

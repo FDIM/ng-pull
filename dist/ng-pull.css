@@ -41,3 +41,45 @@
   left:0;
   right:0;
 }
+
+.pull-left-container {
+  width: 0;
+  position: absolute;
+  right: 0;
+  top:0;
+  bottom: 0;
+  transition: width ease 0.4s;
+  overflow: hidden;
+}
+.pull-left-active .pull-left-container {
+  transition: none;
+}
+.pull-left-container >div{
+  height: 100%;
+}
+
+.pull-right-container {
+  width: 0;
+  position: absolute;
+  left: 0;
+  top:0;
+  bottom: 0;
+  transition: width ease 0.4s;
+  overflow: hidden;
+}
+.pull-right-active .pull-right-container {
+  transition: none;
+}
+.pull-right-container >div{
+  position: absolute;
+  right:0;
+  top:0;
+  bottom: 0;
+}
+.pull-target {
+  transition: margin-left ease 0.4s;
+}
+.pull-left-active .pull-target,
+.pull-right-active .pull-target{
+  transition: none;
+}
