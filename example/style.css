@@ -2,8 +2,8 @@
   height: 500px;
   border: 2px solid #C7C7C7;
   width:300px;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch
+  overflow-y: scroll; /* has to be scroll, not auto */
+  -webkit-overflow-scrolling: touch;
   margin-right: 10px;
   float: left;
 }
