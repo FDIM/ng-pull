@@ -9,14 +9,17 @@
   app.controller("AppController", ['$scope', '$rootScope', '$timeout', function ($scope, $rootScope, $timeout) {
       $scope.items = [];
       $scope.history = [];
+      $scope.loadingMore = false;
       $scope.loadNewItems = function() {
         $scope.history.push("load new items");
       }
       $scope.loadMoreItems = function(cancel) {
         $scope.history.push("loading more items");
+        $scope.loadingMore = true;
         $timeout(function() {
           cancel();
           $scope.history.push("loaded more items");
+          $scope.loadingMore = false;
         }, 2000);
         return false;
       }

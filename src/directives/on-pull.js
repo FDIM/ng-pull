@@ -12,10 +12,10 @@
     end: 'mouseup touchend'
   };
 
-  module.directive('onPullDown', ['ngPullService', getDirective('down')]);
-  module.directive('onPullUp', ['ngPullService', getDirective('up')]);
-  module.directive('onPullLeft', ['ngPullService', getDirective('left')]);
-  module.directive('onPullRight', ['ngPullService', getDirective('right')]);
+  module.directive('onPullDown', ['ngPullService', '$window', getDirective('down')]);
+  module.directive('onPullUp', ['ngPullService', '$window', getDirective('up')]);
+  module.directive('onPullLeft', ['ngPullService', '$window', getDirective('left')]);
+  module.directive('onPullRight', ['ngPullService', '$window', getDirective('right')]);
 
   function getDirective(direction) {
     //var directiveName = "on-pull-"+direction;
@@ -30,7 +30,7 @@
     };
     return OnPullDirective;
 
-    function OnPullDirective(pullService){
+    function OnPullDirective(pullService, $window){
         var progress = 0;
         var initialEvent;
         var factory = pullService.getFactory(direction);
@@ -44,7 +44,9 @@
 
         function link(scope, element, attr, ctrl) {
           var options = normalizeOptions(attr);
+          var eventTarget = angular.element($window);
           ctrl.options = options;
+          ctrl.suspended = false;
           ctrl.queue.forEach(function(fn) {
             fn();
           });
@@ -52,11 +54,12 @@
           element.on(EVENTS.start, pointerDown);
 
           function pointerDown(ev) {
-            if(factory.canBegin(element)){
-              element.on(EVENTS.move, pointerMove);
-              element.on(EVENTS.end, pointerUp);
+            if(factory.canBegin(element) && !ctrl.suspended){
+              eventTarget.on(EVENTS.move, pointerMove);
+              eventTarget.on(EVENTS.end, pointerUp);
               initialEvent = ev;
               startTime = Date.now();
+              ctrl.suspended = true;
             }
           }
 
@@ -64,9 +67,10 @@
             var percent = factory.distance(ev, initialEvent) * 100.0 / (1.0 * options.distance);
             // cancel intention if user drags below certain treshold until timeout
             if(percent <= options.treshold && Date.now() - startTime > options.timeout){
-              element.off(EVENTS.move, pointerMove);
-              element.off(EVENTS.end, pointerUp);
+              eventTarget.off(EVENTS.move, pointerMove);
+              eventTarget.off(EVENTS.end, pointerUp);
               element.removeClass(activeClassName);
+              ctrl.suspended = false;
               progress = 0;
             }
             if (percent < 0) {
@@ -89,8 +93,8 @@
           }
 
           function pointerUp(ev){
-            element.off(EVENTS.move, pointerMove);
-            element.off(EVENTS.end, pointerUp);
+            eventTarget.off(EVENTS.move, pointerMove);
+            eventTarget.off(EVENTS.end, pointerUp);
             element.removeClass(activeClassName);
             // execute expression and depending on its outcome revert progress
             // no expression = always revert progress when gesture is done
@@ -105,6 +109,7 @@
           }
           function revertProgress() {
               scope.$eval(options.progress+'=0');
+              ctrl.suspended = false;
           }
 
         }

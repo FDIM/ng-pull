@@ -19,7 +19,7 @@
       <div class="pull-to-refresh-indicator" ng-style="{'margin-top':($pullDownProgress/100*60)+'px'}">
         <div>
           <div>{{$pullDownProgress|number:2}}</div>
-          <div>Pull down to refresh</div>
+          <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
         </div>
       </div>
       <ul>
@@ -31,9 +31,10 @@
           </div>
         </li>
       </ul>
-      <div pull-up-container>
+      <div pull-up-container style="text-align:center;">
           <div>{{$pullUpProgress|number:2}}</div>
-          <div>Pull up to load more</div>
+          <div ng-if="!loadingMore">{{$pullUpProgress==100?'Release to begin loading':'Pull down to load more'}}</div>
+          <div ng-if="loadingMore">Please wait, loading</div>
       </div>
     </div>
     <div class="container">
