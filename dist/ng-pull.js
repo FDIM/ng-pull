@@ -151,7 +151,9 @@
             // if user pulled more than threshold, gesture should not be canceled when value becomes less than threshold
             if (percent > options.threshold) {
               wasMoreThanThreshold = true;
-              ev.preventDefault();
+              if (direction == 'up' || direction ==='down') {
+                ev.preventDefault();
+              }
             }
             if (percent < 0) {
               percent = 0;
