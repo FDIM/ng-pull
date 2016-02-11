@@ -81,6 +81,10 @@
             scope.$eval(options.progress+'=value',{
               value: percent
             });
+            // special case for up and right
+            if(direction === 'up'){
+              element.prop('scrollTop',element.prop('scrollTop')+options.distance);
+            }
             scope.$apply();
           }
 

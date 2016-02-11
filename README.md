@@ -4,9 +4,6 @@
 
 A set of directives allowing you to implement pull to action pattern, either vertically or horizontally.
 
-## idea
-todo
-
 ## installation
 As simple as "bower install ng-pull" :)
 
