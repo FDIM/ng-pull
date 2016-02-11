@@ -6,7 +6,7 @@
   margin-right: 10px;
   float: left;
 }
-.container ul{
+.container ul {
   padding: 0;
   margin: 0;
   list-style: none;;
@@ -58,4 +58,50 @@
   padding: 8px;
   left:0;
   right:0;
+}
+header .help{
+  display: none;
+}
+@media screen and (max-width:640px){
+  body{
+    padding: 0;
+    margin: 0;
+  }
+  header {
+    height:48px;
+  }
+  header .help{
+    display: block;
+    float:right;
+    background: #fff;
+    color:#888;
+    padding: 6px;
+    border-radius: 4px;
+    margin-top: -6px;
+  }
+  header h2{
+    margin: 0;
+    padding: 13px 4px;
+    font-weight: normal;
+    background: #4CAF50;
+    color: #fff;
+    font-size: 18px;
+  }
+  header>p {
+    display: none;
+  }
+  .items-list {
+    width: 100%;
+    border:0;
+    height: calc(100vh - 48px);
+
+  }
+  .items-list button{
+    padding: 8px;
+    position: relative;
+    top: -12px;
+  }
+  .history-list{
+    display: none;
+  }
 }

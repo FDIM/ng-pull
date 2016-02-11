@@ -11,13 +11,15 @@
 </head>
 
 <body>
-  <h2>Example</h2>
-  <p>Pull down in the list below, do not scroll down</p>
-  <p>Pull single item left to be prompted to delete item</p>
-  <p>Pull single item right to archive item immediately</p>
-  <p>Scroll to bottom and pull up</p>
+  <header>
+    <h2>Example <span class="help" onclick="alert('Pull down in the list below, do not scroll down\nPull single item left to be prompted to delete item\nPull single item right to archive item immediately\nScroll to bottom and pull up')">help</span></h2>
+    <p>Pull down in the list below, do not scroll down</p>
+    <p>Pull single item left to be prompted to delete item</p>
+    <p>Pull single item right to archive item immediately</p>
+    <p>Scroll to bottom and pull up</p>
+  </header>
   <div ng-controller="AppController">
-    <div class="container" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
+    <div class="container items-list" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
       <div class="pull-to-refresh-indicator" ng-style="{'margin-top':($pullDownProgress/100*60)+'px'}">
         <div>
           <div>{{$pullDownProgress|number:2}}</div>
@@ -56,7 +58,7 @@
           <div ng-if="loadingMore">Please wait, loading</div>
       </div>
     </div>
-    <div class="container">
+    <div class="container history-list">
       <ul>
         <li ng-repeat="e in history track by $index">{{e}}</li>
       </ul>
