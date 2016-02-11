@@ -12,9 +12,9 @@
 
 <body>
   <h2>Example</h2>
-  <p>Pull down the list below, do not scroll down</p>
-  <p>Pull single item left to be prompted to delete</p>
-  <p>Pull single item right archive</p>
+  <p>Pull down in the list below, do not scroll down</p>
+  <p>Pull single item left to be prompted to delete item</p>
+  <p>Pull single item right to archive item immediately</p>
   <p>Scroll to bottom and pull up</p>
   <div ng-controller="AppController">
     <div class="container" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
