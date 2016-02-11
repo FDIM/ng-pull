@@ -4,6 +4,8 @@
 
 A set of directives allowing you to implement pull to action pattern, either vertically or horizontally.
 
+Live Demo: http://fdim.github.io/ng-pull/example/
+
 ## installation
 As simple as "bower install ng-pull" :)
 
