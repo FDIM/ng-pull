@@ -7,18 +7,18 @@
  */
 (function (module) {
 
-  module.directive('pullDownContainer', ['ngPullerService', getDirective('down')]);
-  module.directive('pullUpContainer', ['ngPullerService', getDirective('up')]);
-  module.directive('pullLeftContainer', ['ngPullerService', getDirective('left')]);
-  module.directive('pullRightContainer', ['ngPullerService', getDirective('right')]);
+  module.directive('pullDownContainer', ['ngPullService', getDirective('down')]);
+  module.directive('pullUpContainer', ['ngPullService', getDirective('up')]);
+  module.directive('pullLeftContainer', ['ngPullService', getDirective('left')]);
+  module.directive('pullRightContainer', ['ngPullService', getDirective('right')]);
 
   function getDirective(direction) {
     var capitalizedDirection = direction[0].toUpperCase() + direction.slice(1);
 
     return PulledContainer;
 
-    function PulledContainer(pullerService){
-        var factory = pullerService.getFactory(direction);
+    function PulledContainer(pullService){
+        var factory = pullService.getFactory(direction);
         return {
           require:'^onPull'+capitalizedDirection,
           link:{post:link},
@@ -37,4 +37,4 @@
     }
   }
     // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPullerContainer",[])));
+}(angular.module("ngPullContainer",[])));

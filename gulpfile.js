@@ -11,8 +11,8 @@ var karma = require('karma').server;
 var _coverage = 'coverage/**/lcov.info';
 var _scripts = 'src/**/*.js';
 var _styles = 'src/**/*.css';
-var _script = 'ng-puller.js';
-var _style = 'ng-puller.css';
+var _script = 'ng-pull.js';
+var _style = 'ng-pull.css';
 var _dist = 'dist';
 
 gulp.task('build-css', function () {

@@ -12,10 +12,10 @@
     end: 'mouseup touchend'
   };
 
-  module.directive('onPullDown', ['ngPullerService', getDirective('down')]);
-  module.directive('onPullUp', ['ngPullerService', getDirective('up')]);
-  module.directive('onPullLeft', ['ngPullerService', getDirective('left')]);
-  module.directive('onPullRight', ['ngPullerService', getDirective('right')]);
+  module.directive('onPullDown', ['ngPullService', getDirective('down')]);
+  module.directive('onPullUp', ['ngPullService', getDirective('up')]);
+  module.directive('onPullLeft', ['ngPullService', getDirective('left')]);
+  module.directive('onPullRight', ['ngPullService', getDirective('right')]);
 
   function getDirective(direction) {
     //var directiveName = "on-pull-"+direction;
@@ -30,10 +30,10 @@
     };
     return OnPullDirective;
 
-    function OnPullDirective(pullerService){
+    function OnPullDirective(pullService){
         var progress = 0;
         var initialEvent;
-        var factory = pullerService.getFactory(direction);
+        var factory = pullService.getFactory(direction);
         return {
           controller: controller,
           link: link
@@ -69,10 +69,10 @@
               element.removeClass(activeClassName);
               progress = 0;
             }
-            if(percent<0){
-              percent=0;
+            if (percent < 0) {
+              percent = 0;
             }
-            if (percent>1) {
+            if (percent > 1) {
               element.addClass(activeClassName);
               if (percent > 100) {
                 percent = 100;
@@ -117,4 +117,4 @@
   }
 
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPullerOnPull",[])));
+}(angular.module("ngOnPull",[])));

@@ -6,7 +6,7 @@
  * ensures that all module declarations occur before any module references.
  */
 (function (module) {
-  module.service('ngPullerService', PullerService);
+  module.service('ngPullService', PullService);
   var FACTORIES = {
     down:{
       canBegin: function(element) {
@@ -47,13 +47,13 @@
     }
   };
 
-  function PullerService() {
+  function PullService() {
     this.$factories = FACTORIES;
   }
 
-  PullerService.prototype.getFactory = function(direction) {
+  PullService.prototype.getFactory = function(direction) {
     return FACTORIES[direction];
   }
 
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPullerService", [])));
+}(angular.module("ngPullService", [])));

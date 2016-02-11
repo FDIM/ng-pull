@@ -6,7 +6,7 @@
  * automatically.
  */
 describe('acl', function () {
-  beforeEach(module("ngPuller"));
+  beforeEach(module("ngPull"));
   it("should work", function(){
     expect(true).toBeTruthy();
   });

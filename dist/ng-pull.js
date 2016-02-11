@@ -7,7 +7,7 @@
  */
 (function (module) {
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPuller", ["ngPullerOnPull", "ngPullerContainer", "ngPullerService"])));
+}(angular.module("ngPull", ["ngOnPull", "ngPullContainer", "ngPullService"])));
 
 "use strict";
 /**
@@ -17,7 +17,7 @@
  * ensures that all module declarations occur before any module references.
  */
 (function (module) {
-  module.service('ngPullerService', PullerService);
+  module.service('ngPullService', PullService);
   var FACTORIES = {
     down:{
       canBegin: function(element) {
@@ -58,16 +58,16 @@
     }
   };
 
-  function PullerService() {
+  function PullService() {
     this.$factories = FACTORIES;
   }
 
-  PullerService.prototype.getFactory = function(direction) {
+  PullService.prototype.getFactory = function(direction) {
     return FACTORIES[direction];
   }
 
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPullerService", [])));
+}(angular.module("ngPullService", [])));
 
 "use strict";
 /**
@@ -83,10 +83,10 @@
     end: 'mouseup touchend'
   };
 
-  module.directive('onPullDown', ['ngPullerService', getDirective('down')]);
-  module.directive('onPullUp', ['ngPullerService', getDirective('up')]);
-  module.directive('onPullLeft', ['ngPullerService', getDirective('left')]);
-  module.directive('onPullRight', ['ngPullerService', getDirective('right')]);
+  module.directive('onPullDown', ['ngPullService', getDirective('down')]);
+  module.directive('onPullUp', ['ngPullService', getDirective('up')]);
+  module.directive('onPullLeft', ['ngPullService', getDirective('left')]);
+  module.directive('onPullRight', ['ngPullService', getDirective('right')]);
 
   function getDirective(direction) {
     //var directiveName = "on-pull-"+direction;
@@ -101,10 +101,10 @@
     };
     return OnPullDirective;
 
-    function OnPullDirective(pullerService){
+    function OnPullDirective(pullService){
         var progress = 0;
         var initialEvent;
-        var factory = pullerService.getFactory(direction);
+        var factory = pullService.getFactory(direction);
         return {
           controller: controller,
           link: link
@@ -140,10 +140,10 @@
               element.removeClass(activeClassName);
               progress = 0;
             }
-            if(percent<0){
-              percent=0;
+            if (percent < 0) {
+              percent = 0;
             }
-            if (percent>1) {
+            if (percent > 1) {
               element.addClass(activeClassName);
               if (percent > 100) {
                 percent = 100;
@@ -188,7 +188,7 @@
   }
 
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPullerOnPull",[])));
+}(angular.module("ngOnPull",[])));
 
 "use strict";
 /**
@@ -199,18 +199,18 @@
  */
 (function (module) {
 
-  module.directive('pullDownContainer', ['ngPullerService', getDirective('down')]);
-  module.directive('pullUpContainer', ['ngPullerService', getDirective('up')]);
-  module.directive('pullLeftContainer', ['ngPullerService', getDirective('left')]);
-  module.directive('pullRightContainer', ['ngPullerService', getDirective('right')]);
+  module.directive('pullDownContainer', ['ngPullService', getDirective('down')]);
+  module.directive('pullUpContainer', ['ngPullService', getDirective('up')]);
+  module.directive('pullLeftContainer', ['ngPullService', getDirective('left')]);
+  module.directive('pullRightContainer', ['ngPullService', getDirective('right')]);
 
   function getDirective(direction) {
     var capitalizedDirection = direction[0].toUpperCase() + direction.slice(1);
 
     return PulledContainer;
 
-    function PulledContainer(pullerService){
-        var factory = pullerService.getFactory(direction);
+    function PulledContainer(pullService){
+        var factory = pullService.getFactory(direction);
         return {
           require:'^onPull'+capitalizedDirection,
           link:{post:link},
@@ -229,4 +229,4 @@
     }
   }
     // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
-}(angular.module("ngPullerContainer",[])));
+}(angular.module("ngPullContainer",[])));

@@ -1,7 +1,7 @@
 {
-  "name": "ngPuller",
+  "name": "ngPull",
   "version": "1.0.0",
-  "main": "dist/ng-puller.js",
+  "main": "dist/ng-pull.js",
   "scripts": {
     "test": "gulp coverage"
   },
@@ -26,12 +26,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/FDIM/ng-puller.git"
+    "url": "https://github.com/FDIM/ng-pull.git"
   },
   "author": "FDIM <domas.trijonis@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/FDIM/ng-puller/issues"
+    "url": "https://github.com/FDIM/ng-pull/issues"
   },
-  "homepage": "https://github.com/FDIM/ng-puller"
+  "homepage": "https://github.com/FDIM/ng-pull"
 }
