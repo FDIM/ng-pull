@@ -128,10 +128,10 @@
           element.on(EVENTS.start, pointerDown);
 
           function pointerDown(ev) {
-            if(factory.canBegin(element) && !ctrl.suspended && ev.which === 1){
+            if(factory.canBegin(element) && !ctrl.suspended && (ev.which === 1 || ev.which === 0)) {
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
-              initialEvent = ev;
+              initialEvent = normalizeEvent(ev);
               startTime = Date.now();
               ctrl.suspended = true;
               wasMoreThanThreshold = false;
@@ -139,7 +139,7 @@
           }
 
           function pointerMove(ev){
-            var percent = factory.distance(ev, initialEvent) * 100.0 / (1.0 * options.distance);
+            var percent = factory.distance(normalizeEvent(ev), initialEvent) * 100.0 / (1.0 * options.distance);
             // cancel intention if user drags below certain threshold until timeout
             if(percent <= options.threshold && Date.now() - startTime > options.timeout && !wasMoreThanThreshold){
               eventTarget.off(EVENTS.move, pointerMove);
@@ -205,6 +205,14 @@
       }
       options.expression = attr['onPull'+capitalizedDirection];
       return options;
+    }
+
+    function normalizeEvent(ev) {
+      if(ev.touches){
+        ev.clientX = ev.touches[0].clientX;
+        ev.clientY = ev.touches[0].clientY;
+      }
+      return ev;
     }
   }
 
