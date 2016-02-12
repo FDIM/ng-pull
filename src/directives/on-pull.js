@@ -11,11 +11,12 @@
     move:'mousemove touchmove',
     end: 'mouseup touchend'
   };
+  var NO_SELECT_CLASS = 'no-select';
 
-  module.directive('onPullDown', ['ngPullService', '$window', getDirective('down')]);
-  module.directive('onPullUp', ['ngPullService', '$window', getDirective('up')]);
-  module.directive('onPullLeft', ['ngPullService', '$window', getDirective('left')]);
-  module.directive('onPullRight', ['ngPullService', '$window', getDirective('right')]);
+  module.directive('onPullDown', ['ngPullService', '$window', '$document', getDirective('down')]);
+  module.directive('onPullUp', ['ngPullService', '$window', '$document', getDirective('up')]);
+  module.directive('onPullLeft', ['ngPullService', '$window', '$document', getDirective('left')]);
+  module.directive('onPullRight', ['ngPullService', '$window', '$document', getDirective('right')]);
 
   function getDirective(direction) {
     //var directiveName = "on-pull-"+direction;
@@ -31,7 +32,7 @@
     };
     return OnPullDirective;
 
-    function OnPullDirective(pullService, $window){
+    function OnPullDirective(pullService, $window, $document){
         var progress = 0;
         var initialEvent;
         var factory = pullService.getFactory(direction);
@@ -46,6 +47,7 @@
         function link(scope, element, attr, ctrl) {
           var options = normalizeOptions(attr);
           var eventTarget = angular.element($window);
+          var selectionTarget = $document.find('body');
           var startTime;
           var wasMoreThanThreshold;
           ctrl.options = options;
@@ -74,6 +76,7 @@
               eventTarget.off(EVENTS.move, pointerMove);
               eventTarget.off(EVENTS.end, pointerUp);
               element.removeClass(activeClassName);
+              selectionTarget.removeClass(NO_SELECT_CLASS);
               ctrl.suspended = false;
               percent = 0;
             }
@@ -89,6 +92,7 @@
             }
             if (percent > 1) {
               element.addClass(activeClassName);
+              selectionTarget.addClass(NO_SELECT_CLASS);
               if (percent > 100) {
                 percent = 100;
               }
@@ -111,6 +115,7 @@
             eventTarget.off(EVENTS.move, pointerMove);
             eventTarget.off(EVENTS.end, pointerUp);
             element.removeClass(activeClassName);
+            selectionTarget.removeClass(NO_SELECT_CLASS);
             // execute expression and depending on its outcome revert progress
             // no expression = always revert progress when gesture is done
             if(options.expression && scope.$eval(options.progress)>=100){
