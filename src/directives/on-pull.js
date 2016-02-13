@@ -108,7 +108,7 @@
             if(direction === 'right'){
               element.prop('scrollLeft',element.prop('scrollLeft')+options.distance);
             }
-            scope.$apply();
+            scope.$applyAsync();
           }
 
           function pointerUp(ev){
