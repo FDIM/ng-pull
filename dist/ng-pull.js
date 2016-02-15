@@ -216,6 +216,10 @@
     }
 
     function normalizeEvent(ev) {
+      // jquery
+      if(ev.originalEvent){
+        ev = ev.originalEvent;
+      }
       if(ev.touches){
         ev.clientX = ev.touches[0].clientX;
         ev.clientY = ev.touches[0].clientY;
@@ -291,13 +295,15 @@
     function link(scope, element, attr, controllers) {
       element.addClass('pull-target');
       controllers.forEach(function(pullCtrl, index){
-        var cssProp = 'marginLeft';
-        pullCtrl.queue.push(function(){
-          scope.$watch(pullCtrl.options.progress, function(newValue) {
-            // swap direction based on controller
-            element[0].style[cssProp] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
-          })
-        });
+        if(pullCtrl){
+          var cssProp = 'marginLeft';
+          pullCtrl.queue.push(function(){
+            scope.$watch(pullCtrl.options.progress, function(newValue) {
+              // swap direction based on controller
+              element[0].style[cssProp] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
+            })
+          });
+        }
       });
     }
   }
