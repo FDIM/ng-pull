@@ -4,6 +4,7 @@
   width:300px;
   overflow-y: scroll; /* has to be scroll, not auto */
   -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
   margin-right: 10px;
   float: left;
 }

@@ -296,11 +296,12 @@
       element.addClass('pull-target');
       controllers.forEach(function(pullCtrl, index){
         if(pullCtrl){
-          var cssProp = 'marginLeft';
           pullCtrl.queue.push(function(){
             scope.$watch(pullCtrl.options.progress, function(newValue) {
               // swap direction based on controller
-              element[0].style[cssProp] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
+              element[0].style['marginLeft'] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
+              // compensate for reduced with or changed position
+              element[0].style['marginRight'] = (index == 0?1:-1) * (newValue / 100 * pullCtrl.options.distance)+'px';
             })
           });
         }
