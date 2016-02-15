@@ -74,7 +74,7 @@
   bottom: 0;
 }
 .pull-target {
-  transition: margin-left ease 0.4s;
+  transition: margin ease 0.4s;
 }
 .pull-left-active .pull-target,
 .pull-right-active .pull-target{
