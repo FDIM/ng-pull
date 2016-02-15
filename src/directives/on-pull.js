@@ -145,6 +145,10 @@
     }
 
     function normalizeEvent(ev) {
+      // jquery
+      if(ev.originalEvent){
+        ev = ev.originalEvent;
+      }
       if(ev.touches){
         ev.clientX = ev.touches[0].clientX;
         ev.clientY = ev.touches[0].clientY;
