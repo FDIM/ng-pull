@@ -96,7 +96,6 @@
     var defaultOptions = {
       Distance: 100,
       Progress:'$pull' + capitalizedDirection + 'Progress',
-      Duration: 450,
       Timeout:300,
       Threshold: 5,
       Disabled: false,
