@@ -12,7 +12,7 @@
       $scope.loadingMore = false;
 
       for(var i =0; i< 100; i++){
-        $scope.items.push({title:"item "+i, intro:'intro '+i});
+        $scope.items.push({title:"item "+i, intro:i % 5 ===0 && i>0?'You can\'t pull me (disabled)':'intro '+i, disabled: i % 5 ===0  && i>0 });
       }
 
       $scope.loadNewItems = function() {

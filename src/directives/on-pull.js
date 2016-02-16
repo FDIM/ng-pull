@@ -28,6 +28,7 @@
       Duration: 450,
       Timeout:300,
       Threshold: 5,
+      Disabled: false,
       Reset: '$pull'+capitalizedDirection+'Reset'
     };
     return OnPullDirective;
@@ -56,7 +57,18 @@
             fn();
           });
           scope.$eval(options.reset+'=value',{value:revertProgress});
-          element.on(EVENTS.start, pointerDown);
+          if(attr['pull'+capitalizedDirection+'Disabled']){
+            scope.$watch(options.disabled, function(disabled){
+              if (disabled) {
+                element.off(EVENTS.start, pointerDown);
+                revertProgress();
+              } else {
+                element.on(EVENTS.start, pointerDown);
+              }
+            });
+          } else {
+            element.on(EVENTS.start, pointerDown);
+          }
 
           function pointerDown(ev) {
             if(factory.canBegin(element) && !ctrl.suspended && (ev.which === 1 || ev.which === 0)) {
