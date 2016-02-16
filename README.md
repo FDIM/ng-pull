@@ -68,4 +68,4 @@ You can customise behavior by providing additional attributes:
 * pull-(down|up|left|right)-disabled : an expression to watch to enable or disable gesture
 * pull-(down|up|left|right)-reset : scope variable name to expose reset function. Default: $pull(Down|Up|Left|right)Reset
 
-Note that directive are not using isolated scope.
+Note that directives are not using isolated scope.
