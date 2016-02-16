@@ -11,13 +11,19 @@
 .container ul {
   padding: 0;
   margin: 0;
-  list-style: none;;
+  list-style: none;
 }
 .container li {
-    height: 48px;
+    height: 52px;
     padding: 4px;
     border-top:1px solid #E8E8E8;
     position: relative;
+    background: #fff;
+}
+.container li .pull-target{
+  border-left:1px solid #2B8CFF;
+  border-right:1px solid #2B8CFF;
+
 }
 .container li:first-child{
   border-top: 0;
@@ -30,7 +36,7 @@
   margin-right: 8px;
 }
 .container li .content{
-  padding: 2px;
+  padding: 4px;
 }
 .container button{
   display: inline-block;
