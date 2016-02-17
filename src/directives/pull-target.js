@@ -11,22 +11,18 @@
 
   function PullTarget(pullService) {
     return {
-      require:['?^onPullLeft','?^onPullRight'],
+      require:['?^onPullLeft','?^onPullRight', '?^onPullDown','?^onPullUp'],
       link: link
     };
 
     function link(scope, element, attr, controllers) {
       element.addClass('pull-target');
+      // go throught each possible controller, wait until directive is ready and create watcher that will update DOM element
       controllers.forEach(function(pullCtrl, index){
         if(pullCtrl){
-          pullCtrl.queue.push(function(){
+          pullCtrl.queue.push(function(factory){
             scope.$watch(pullCtrl.options.progress, function(newValue) {
-              // swap direction based on controller
-              element[0].style['marginLeft'] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
-              // compensate for reduced with or changed position
-              element[0].style['marginRight'] = (index == 0?1:-1) * (newValue / 100 * pullCtrl.options.distance)+'px';
-              //element[0].style['transform'] = 'translateX('+(index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px)translateZ(0)';
-              
+              factory.target.update(element, newValue, pullCtrl);
             })
           });
         }

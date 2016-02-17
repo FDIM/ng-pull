@@ -54,7 +54,7 @@
           ctrl.options = options;
           ctrl.suspended = false;
           ctrl.queue.forEach(function(fn) {
-            fn();
+            fn(factory);
           });
           scope.$eval(options.reset+'=value',{value:revertProgress});
           if(attr['pull'+capitalizedDirection+'Disabled']){
@@ -119,6 +119,7 @@
             });
             // special case for up
             if(direction === 'up'){
+              element.prop('paddingBottom', options.progress*options.distance+'px');
               element.prop('scrollTop',element.prop('scrollTop')+options.distance);
             }
             // special case for right

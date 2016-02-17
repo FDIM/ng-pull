@@ -11,7 +11,7 @@
   height: 0;
   position: relative;
   margin-top: 0px;
-  transition: margin-top ease 0.4s;
+  transition: transform ease 0.4s;
 }
 .pull-down-active .pull-down-container {
   transition: none;
@@ -27,7 +27,7 @@
   height: 0;
   position: relative;
   overflow: hidden;
-  transition: height ease 0.4s;
+  transition: transform ease 0.4s;
 }
 .pull-up-active .pull-up-container {
   transition: none;
@@ -45,8 +45,8 @@
   right: 0;
   top:0;
   bottom: 0;
-  transition: width ease 0.4s;
-  overflow: hidden;
+  transition: transform ease 0.4s;
+  /*overflow: hidden;*/
 }
 .pull-left-active .pull-left-container {
   transition: none;
@@ -61,8 +61,8 @@
   left: 0;
   top:0;
   bottom: 0;
-  transition: width ease 0.4s;
-  overflow: hidden;
+  transition: transform ease 0.4s;
+  /*overflow: hidden;*/
 }
 .pull-right-active .pull-right-container {
   transition: none;
@@ -74,8 +74,10 @@
   bottom: 0;
 }
 .pull-target {
-  transition: margin ease 0.4s;
+  transition: transform ease 0.4s;
 }
+.pull-up-active .pull-target,
+.pull-down-active .pull-target,
 .pull-left-active .pull-target,
 .pull-right-active .pull-target{
   transition: none;

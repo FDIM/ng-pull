@@ -19,19 +19,12 @@
     <p>Scroll to bottom and pull up</p>
   </header>
   <div ng-controller="AppController">
-    <div class="container items-list" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
-      <div class="pull-to-refresh-indicator" ng-style="{'margin-top':($pullDownProgress/100*60)+'px'}">
-        <div>
+    <div class="container items-list" on-pull-down="loadNewItems()" pull-down-distance="120" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="120" pull-up-progress="$pullUpProgress">
+      <div pull-down-container class="pull-to-refresh-indicator">
           <div>{{$pullDownProgress|number:2}}</div>
           <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
-        </div>
       </div>
-      <!-- or -->
-      <!-- <div pull-down-container>
-          <div>{{$pullDownProgress|number:2}}</div>
-          <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
-      </div> -->
-      <ul>
+      <ul pull-target>
         <li ng-repeat="i in items" pull-left-disabled="i.disabled" on-pull-left="false" pull-left-distance="120" pull-left-reset="$cancelDelete" pull-left-progress="$pullLeftProgress" on-pull-right="archiveItem(i)" pull-right-distance="150" pull-right-disabled="i.disabled">
           <div pull-right-container>
             <p style="padding-top:20px; text-align:right;">{{$pullRightProgress|number:2}} archived</p>
@@ -54,7 +47,7 @@
       </ul>
       <div pull-up-container style="text-align:center;">
           <div>{{$pullUpProgress|number:2}}</div>
-          <div ng-if="!loadingMore">{{$pullUpProgress==100?'Release to begin loading':'Pull down to load more'}}</div>
+          <div ng-if="!loadingMore">{{$pullUpProgress==100?'Release to begin loading':'Pull up to load more'}}</div>
           <div ng-if="loadingMore">Please wait, loading</div>
       </div>
     </div>

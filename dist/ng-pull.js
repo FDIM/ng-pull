@@ -17,6 +17,7 @@
  * ensures that all module declarations occur before any module references.
  */
 (function (module) {
+  var TRANSLATEZ_SUFFIX = 'translateZ(0)';
   module.service('ngPullService', ['$$rAF',PullService]);
   var FACTORIES = {
     down:{
@@ -27,16 +28,41 @@
       distance: function(newEvent, oldEvent) {
         return newEvent.clientY - oldEvent.clientY;
       },
-      cssProp:'margin-top'
+      container:{
+        prepare:function(element, ctrl) {
+
+        },
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = progress>0?'translateY('+(progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
+        }
+      },
+      target:{
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = progress>0?'translateY('+(progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
+        }
+      }
     },
     up:{
       canBegin: function(element) {
-        return Math.round(element.prop('scrollTop')) === element.prop('scrollHeight') - element.prop('clientHeight');
+        return Math.round(element.prop('scrollTop')) === Math.round(element.prop('scrollHeight') - element.prop('clientHeight'));
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientY - newEvent.clientY;
       },
-      cssProp:'height'
+      container:{
+        prepare:function(element, ctrl) {
+
+        },
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = 'translateY('+(ctrl.options.distance-progress / 100 * ctrl.options.distance)+'px)translateZ(0)';
+          element[0].style.height = (progress / 100 * ctrl.options.distance)+'px';
+        }
+      },
+      target:{
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = 'translateY('+(ctrl.options.distance-progress / 100 * ctrl.options.distance)+'px)translateZ(0)';
+        }
+      }
     },
     left:{
       canBegin: function(element) {
@@ -45,16 +71,40 @@
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientX - newEvent.clientX;
       },
-      cssProp:'width'
+      container:{
+        prepare:function(element, ctrl) {
+          element.children()[0].style.width = ctrl.options.distance + 'px';
+        },
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = progress>0?'translateX('+(-progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
+        }
+      },
+      target:{
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = progress>0?'translateX('+(-progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
+        }
+      }
     },
     right:{
       canBegin: function(element) {
-        return Math.round(element.prop('scrollLeft')) === element.prop('scrollWidth') - element.prop('clientWidth');
+        return Math.round(element.prop('scrollLeft')) === Math.round(element.prop('scrollWidth') - element.prop('clientWidth')-120);
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientX - oldEvent.clientX;
       },
-      cssProp:'width'
+      container:{
+        prepare:function(element, ctrl) {
+          element.children()[0].style.width = ctrl.options.distance + 'px';
+        },
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = progress>0?'translateX('+(progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
+        }
+      },
+      target:{
+        update:function(element, progress, ctrl) {
+          element[0].style['transform'] = progress>0?'translateX('+(progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
+        }
+      }
     }
   };
 
@@ -142,7 +192,7 @@
           ctrl.options = options;
           ctrl.suspended = false;
           ctrl.queue.forEach(function(fn) {
-            fn();
+            fn(factory);
           });
           scope.$eval(options.reset+'=value',{value:revertProgress});
           if(attr['pull'+capitalizedDirection+'Disabled']){
@@ -207,6 +257,7 @@
             });
             // special case for up
             if(direction === 'up'){
+              element.prop('paddingBottom', options.progress*options.distance+'px');
               element.prop('scrollTop',element.prop('scrollTop')+options.distance);
             }
             // special case for right
@@ -300,14 +351,12 @@
         };
 
         function link(scope, element, attr, pullCtrl) {
-          pullCtrl.queue.push(function(){
+          pullCtrl.queue.push(function( ){
             element.addClass('pull-'+direction+'-container');
-            if(direction ==='left' || direction ==='right'){
-              element.children()[0].style.width = pullCtrl.options.distance + 'px';
-            }
+            factory.container.prepare(element, pullCtrl);
             scope.$watch(pullCtrl.options.progress, function(newValue) {
-              element[0].style[factory.cssProp] = (newValue / 100 * pullCtrl.options.distance)+'px';
-            })
+              factory.container.update(element, newValue, pullCtrl);
+            });
           });
         }
     }
@@ -328,22 +377,18 @@
 
   function PullTarget(pullService) {
     return {
-      require:['?^onPullLeft','?^onPullRight'],
+      require:['?^onPullLeft','?^onPullRight', '?^onPullDown','?^onPullUp'],
       link: link
     };
 
     function link(scope, element, attr, controllers) {
       element.addClass('pull-target');
+      // go throught each possible controller, wait until directive is ready and create watcher that will update DOM element
       controllers.forEach(function(pullCtrl, index){
         if(pullCtrl){
-          pullCtrl.queue.push(function(){
+          pullCtrl.queue.push(function(factory){
             scope.$watch(pullCtrl.options.progress, function(newValue) {
-              // swap direction based on controller
-              element[0].style['marginLeft'] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
-              // compensate for reduced with or changed position
-              element[0].style['marginRight'] = (index == 0?1:-1) * (newValue / 100 * pullCtrl.options.distance)+'px';
-              //element[0].style['transform'] = 'translateX('+(index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px)translateZ(0)';
-              
+              factory.target.update(element, newValue, pullCtrl);
             })
           });
         }
