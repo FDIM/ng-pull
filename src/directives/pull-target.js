@@ -25,6 +25,8 @@
               element[0].style['marginLeft'] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
               // compensate for reduced with or changed position
               element[0].style['marginRight'] = (index == 0?1:-1) * (newValue / 100 * pullCtrl.options.distance)+'px';
+              //element[0].style['transform'] = 'translateX('+(index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px)translateZ(0)';
+              
             })
           });
         }
