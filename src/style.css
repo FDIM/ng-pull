@@ -27,7 +27,7 @@
   height: 0;
   position: relative;
   overflow: hidden;
-  transition: transform ease 0.4s;
+  transition: all ease 0.4s;
 }
 .pull-up-active .pull-up-container {
   transition: none;
