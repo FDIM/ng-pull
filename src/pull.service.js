@@ -6,12 +6,12 @@
  * ensures that all module declarations occur before any module references.
  */
 (function (module) {
-  module.service('ngPullService', PullService);
+  module.service('ngPullService', ['$$rAF',PullService]);
   var FACTORIES = {
     down:{
       canBegin: function(element) {
         // stays in top
-        return element.prop('scrollTop') === 0;
+        return Math.floor(element.prop('scrollTop')) === 0;
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientY - oldEvent.clientY;
@@ -20,7 +20,7 @@
     },
     up:{
       canBegin: function(element) {
-        return element.prop('scrollTop') === element.prop('scrollHeight') - element.prop('clientHeight');
+        return Math.round(element.prop('scrollTop')) === element.prop('scrollHeight') - element.prop('clientHeight');
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientY - newEvent.clientY;
@@ -29,7 +29,7 @@
     },
     left:{
       canBegin: function(element) {
-        return element.prop('scrollLeft') === 0;
+        return Math.floor(element.prop('scrollLeft')) === 0;
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientX - newEvent.clientX;
@@ -38,7 +38,7 @@
     },
     right:{
       canBegin: function(element) {
-        return element.prop('scrollLeft') === element.prop('scrollWidth') - element.prop('clientWidth');
+        return Math.round(element.prop('scrollLeft')) === element.prop('scrollWidth') - element.prop('clientWidth');
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientX - oldEvent.clientX;
@@ -47,13 +47,30 @@
     }
   };
 
-  function PullService() {
+  function PullService($$rAF) {
     this.$factories = FACTORIES;
+    this.$$rAF = $$rAF;
   }
 
   PullService.prototype.getFactory = function(direction) {
     return FACTORIES[direction];
   }
-
+  // taken from angular material: https://github.com/angular/material/blob/67e50f6e51b3e0282c086d9bb7760661c8135bbf/src/core/core.js
+  PullService.prototype.invokeOncePerFrame = function(cb) {
+    var queuedArgs, alreadyQueued, queueCb, context, self;
+    self = this;
+    return function debounced() {
+      queuedArgs = arguments;
+      context = this;
+      queueCb = cb;
+      if (!alreadyQueued) {
+        alreadyQueued = true;
+        self.$$rAF(function() {
+          queueCb.apply(context, Array.prototype.slice.call(queuedArgs));
+          alreadyQueued = false;
+        });
+      }
+    };
+  };
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
 }(angular.module("ngPullService", [])));

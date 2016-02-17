@@ -17,12 +17,12 @@
  * ensures that all module declarations occur before any module references.
  */
 (function (module) {
-  module.service('ngPullService', PullService);
+  module.service('ngPullService', ['$$rAF',PullService]);
   var FACTORIES = {
     down:{
       canBegin: function(element) {
         // stays in top
-        return element.prop('scrollTop') === 0;
+        return Math.floor(element.prop('scrollTop')) === 0;
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientY - oldEvent.clientY;
@@ -31,7 +31,7 @@
     },
     up:{
       canBegin: function(element) {
-        return element.prop('scrollTop') === element.prop('scrollHeight') - element.prop('clientHeight');
+        return Math.round(element.prop('scrollTop')) === element.prop('scrollHeight') - element.prop('clientHeight');
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientY - newEvent.clientY;
@@ -40,7 +40,7 @@
     },
     left:{
       canBegin: function(element) {
-        return element.prop('scrollLeft') === 0;
+        return Math.floor(element.prop('scrollLeft')) === 0;
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientX - newEvent.clientX;
@@ -49,7 +49,7 @@
     },
     right:{
       canBegin: function(element) {
-        return element.prop('scrollLeft') === element.prop('scrollWidth') - element.prop('clientWidth');
+        return Math.round(element.prop('scrollLeft')) === element.prop('scrollWidth') - element.prop('clientWidth');
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientX - oldEvent.clientX;
@@ -58,14 +58,31 @@
     }
   };
 
-  function PullService() {
+  function PullService($$rAF) {
     this.$factories = FACTORIES;
+    this.$$rAF = $$rAF;
   }
 
   PullService.prototype.getFactory = function(direction) {
     return FACTORIES[direction];
   }
-
+  // taken from angular material: https://github.com/angular/material/blob/67e50f6e51b3e0282c086d9bb7760661c8135bbf/src/core/core.js
+  PullService.prototype.invokeOncePerFrame = function(cb) {
+    var queuedArgs, alreadyQueued, queueCb, context, self;
+    self = this;
+    return function debounced() {
+      queuedArgs = arguments;
+      context = this;
+      queueCb = cb;
+      if (!alreadyQueued) {
+        alreadyQueued = true;
+        self.$$rAF(function() {
+          queueCb.apply(context, Array.prototype.slice.call(queuedArgs));
+          alreadyQueued = false;
+        });
+      }
+    };
+  };
   // The name of the module, followed by its dependencies (at the bottom to facilitate enclosure)
 }(angular.module("ngPullService", [])));
 
@@ -121,6 +138,7 @@
           var selectionTarget = $document.find('body');
           var startTime;
           var wasMoreThanThreshold;
+          var deferredUpdate = pullService.invokeOncePerFrame(updateOncePerFrame);
           ctrl.options = options;
           ctrl.suspended = false;
           ctrl.queue.forEach(function(fn) {
@@ -157,8 +175,6 @@
             if(percent <= options.threshold && Date.now() - startTime > options.timeout && !wasMoreThanThreshold){
               eventTarget.off(EVENTS.move, pointerMove);
               eventTarget.off(EVENTS.end, pointerUp);
-              element.removeClass(activeClassName);
-              selectionTarget.removeClass(NO_SELECT_CLASS);
               ctrl.suspended = false;
               percent = 0;
             }
@@ -168,16 +184,23 @@
               if (direction == 'up' || direction ==='down') {
                 ev.preventDefault();
               }
+              ev.stopPropagation();
             }
+            deferredUpdate(percent);
+          }
+          function updateOncePerFrame(percent) {
             if (percent < 0) {
               percent = 0;
             }
-            if (percent > 1) {
+            if (percent > 100) {
+              percent = 100;
+            }
+            if (percent > 0) {
               element.addClass(activeClassName);
               selectionTarget.addClass(NO_SELECT_CLASS);
-              if (percent > 100) {
-                percent = 100;
-              }
+            } else {
+              element.removeClass(activeClassName);
+              selectionTarget.removeClass(NO_SELECT_CLASS);
             }
             scope.$eval(options.progress+'=value',{
               value: percent
@@ -190,7 +213,8 @@
             if(direction === 'right'){
               element.prop('scrollLeft',element.prop('scrollLeft')+options.distance);
             }
-            scope.$applyAsync();
+            scope.$apply();
+
           }
 
           function pointerUp(ev){
@@ -203,14 +227,16 @@
             if(options.expression && scope.$eval(options.progress)>=100){
                 if(scope.$eval(options.expression, {$reset:revertProgress})!==false) {
                   revertProgress();
+                  deferredUpdate(0);
                 }
             } else {
               revertProgress();
+              deferredUpdate(0);
             }
-            scope.$apply();
           }
           function revertProgress() {
-              scope.$eval(options.progress+'=0');
+              //scope.$eval(options.progress+'=0');
+              deferredUpdate(0);
               ctrl.suspended = false;
           }
 
@@ -223,6 +249,9 @@
         options[key.toLowerCase()] = attr['pull'+capitalizedDirection+key] || defaultOptions[key];
       }
       options.expression = attr['onPull'+capitalizedDirection];
+      options.timeout *= 1;
+      options.distance *= 1;
+      options.threshold *= 1;
       return options;
     }
 
@@ -313,6 +342,8 @@
               element[0].style['marginLeft'] = (index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px';
               // compensate for reduced with or changed position
               element[0].style['marginRight'] = (index == 0?1:-1) * (newValue / 100 * pullCtrl.options.distance)+'px';
+              //element[0].style['transform'] = 'translateX('+(index == 0?-1:1) * (newValue / 100 * pullCtrl.options.distance)+'px)translateZ(0)';
+              
             })
           });
         }

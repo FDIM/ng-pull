@@ -50,6 +50,7 @@
           var selectionTarget = $document.find('body');
           var startTime;
           var wasMoreThanThreshold;
+          var deferredUpdate = pullService.invokeOncePerFrame(updateOncePerFrame);
           ctrl.options = options;
           ctrl.suspended = false;
           ctrl.queue.forEach(function(fn) {
@@ -86,8 +87,6 @@
             if(percent <= options.threshold && Date.now() - startTime > options.timeout && !wasMoreThanThreshold){
               eventTarget.off(EVENTS.move, pointerMove);
               eventTarget.off(EVENTS.end, pointerUp);
-              element.removeClass(activeClassName);
-              selectionTarget.removeClass(NO_SELECT_CLASS);
               ctrl.suspended = false;
               percent = 0;
             }
@@ -97,16 +96,23 @@
               if (direction == 'up' || direction ==='down') {
                 ev.preventDefault();
               }
+              ev.stopPropagation();
             }
+            deferredUpdate(percent);
+          }
+          function updateOncePerFrame(percent) {
             if (percent < 0) {
               percent = 0;
             }
-            if (percent > 1) {
+            if (percent > 100) {
+              percent = 100;
+            }
+            if (percent > 0) {
               element.addClass(activeClassName);
               selectionTarget.addClass(NO_SELECT_CLASS);
-              if (percent > 100) {
-                percent = 100;
-              }
+            } else {
+              element.removeClass(activeClassName);
+              selectionTarget.removeClass(NO_SELECT_CLASS);
             }
             scope.$eval(options.progress+'=value',{
               value: percent
@@ -119,7 +125,8 @@
             if(direction === 'right'){
               element.prop('scrollLeft',element.prop('scrollLeft')+options.distance);
             }
-            scope.$applyAsync();
+            scope.$apply();
+
           }
 
           function pointerUp(ev){
@@ -132,14 +139,16 @@
             if(options.expression && scope.$eval(options.progress)>=100){
                 if(scope.$eval(options.expression, {$reset:revertProgress})!==false) {
                   revertProgress();
+                  deferredUpdate(0);
                 }
             } else {
               revertProgress();
+              deferredUpdate(0);
             }
-            scope.$apply();
           }
           function revertProgress() {
-              scope.$eval(options.progress+'=0');
+              //scope.$eval(options.progress+'=0');
+              deferredUpdate(0);
               ctrl.suspended = false;
           }
 
@@ -152,6 +161,9 @@
         options[key.toLowerCase()] = attr['pull'+capitalizedDirection+key] || defaultOptions[key];
       }
       options.expression = attr['onPull'+capitalizedDirection];
+      options.timeout *= 1;
+      options.distance *= 1;
+      options.threshold *= 1;
       return options;
     }
 
