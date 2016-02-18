@@ -121,7 +121,7 @@
             if (percent > 100) {
               percent = 100;
             }
-            if(wasMoreThanThreshold && percent > 1){
+            if(wasMoreThanThreshold && percent > 1 && ctrl.suspended){
               element.addClass(activeClassName);
             }
             scope.$eval(options.progress+'=value',{
@@ -141,6 +141,7 @@
           }
 
           function pointerUp(ev){
+            ctrl.suspended = false; // to ensure that active class will not be added on next frame 
             eventTarget.off(EVENTS.move, pointerMove);
             eventTarget.off(EVENTS.end, pointerUp);
             element.removeClass(activeClassName);
@@ -162,13 +163,14 @@
             }
           }
           function revertProgress() {
-              // always call updateOncePerFrame on next frame,
-              // defferedUpdate will ignore the call if one is already queued
-              pullService.$$rAF(function() {
-                updateOncePerFrame(0);
-              })
-              ctrl.suspended = false;
-              element.data(SUSPEDED_PROP, false);
+
+            element.data(SUSPEDED_PROP, false);
+            ctrl.suspended = false;
+            // always call updateOncePerFrame on next frame,
+            // defferedUpdate will ignore the call if one is already queued
+            pullService.$$rAF(function() {
+              updateOncePerFrame(0);
+            })
           }
 
         }
