@@ -81,7 +81,6 @@
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
 
-              element.addClass(activeClassName);
               selectionTarget.data(NO_SELECT_COUNTER_PROP,selectionTarget.data(NO_SELECT_COUNTER_PROP)+1);
               selectionTarget.addClass(NO_SELECT_CLASS);
               initialEvent = normalizeEvent(ev);
@@ -121,6 +120,9 @@
             }
             if (percent > 100) {
               percent = 100;
+            }
+            if(wasMoreThanThreshold && percent > 1){
+              element.addClass(activeClassName);
             }
             scope.$eval(options.progress+'=value',{
               value: percent
