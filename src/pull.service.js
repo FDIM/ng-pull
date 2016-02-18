@@ -43,13 +43,13 @@
 
         },
         update:function(element, progress, ctrl) {
-          element[0].style['transform'] = 'translateY('+(ctrl.options.distance-progress / 100 * ctrl.options.distance)+'px)translateZ(0)';
+          element[0].style['transform'] = progress>0?'translateY('+(ctrl.options.distance-progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
           element[0].style.height = (progress / 100 * ctrl.options.distance)+'px';
         }
       },
       target:{
         update:function(element, progress, ctrl) {
-          element[0].style['transform'] = 'translateY('+(ctrl.options.distance-progress / 100 * ctrl.options.distance)+'px)translateZ(0)';
+          element[0].style['transform'] = progress>0?'translateY('+(ctrl.options.distance-progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
         }
       }
     },

@@ -12,6 +12,8 @@
     end: 'mouseup touchend'
   };
   var NO_SELECT_CLASS = 'no-select';
+  var NO_SELECT_COUNTER_PROP = '$noSelectCounter';
+  var SUSPEDED_PROP ='$pullSuspended';
 
   module.directive('onPullDown', ['ngPullService', '$window', '$document', getDirective('down')]);
   module.directive('onPullUp', ['ngPullService', '$window', '$document', getDirective('up')]);
@@ -56,6 +58,8 @@
           ctrl.queue.forEach(function(fn) {
             fn(factory);
           });
+          element.data(SUSPEDED_PROP, false);
+          selectionTarget.data(NO_SELECT_COUNTER_PROP, 0);
           scope.$eval(options.reset+'=value',{value:revertProgress});
           if(attr['pull'+capitalizedDirection+'Disabled']){
             scope.$watch(options.disabled, function(disabled){
@@ -73,9 +77,13 @@
           }
 
           function pointerDown(ev) {
-            if((ev.which === 1 || ev.which === 0) && !ctrl.suspended && factory.canBegin(element, options) ) {
+            if((ev.which === 1 || ev.which === 0) && !ctrl.suspended && !element.data(SUSPEDED_PROP) && factory.canBegin(element, options) ) {
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
+
+              element.addClass(activeClassName);
+              selectionTarget.data(NO_SELECT_COUNTER_PROP,selectionTarget.data(NO_SELECT_COUNTER_PROP)+1);
+              selectionTarget.addClass(NO_SELECT_CLASS);
               initialEvent = normalizeEvent(ev);
               startTime = Date.now();
               ctrl.suspended = true;
@@ -89,6 +97,11 @@
             if(percent <= options.threshold && Date.now() - startTime > options.timeout && !wasMoreThanThreshold){
               eventTarget.off(EVENTS.move, pointerMove);
               eventTarget.off(EVENTS.end, pointerUp);
+              element.removeClass(activeClassName);
+              selectionTarget.data(NO_SELECT_COUNTER_PROP,selectionTarget.data(NO_SELECT_COUNTER_PROP)-1);
+              if(selectionTarget.data(NO_SELECT_COUNTER_PROP)===0){
+                selectionTarget.removeClass(NO_SELECT_CLASS);
+              }
               ctrl.suspended = false;
               percent = 0;
             }
@@ -109,13 +122,6 @@
             if (percent > 100) {
               percent = 100;
             }
-            if (percent > 0) {
-              element.addClass(activeClassName);
-              selectionTarget.addClass(NO_SELECT_CLASS);
-            } else {
-              element.removeClass(activeClassName);
-              selectionTarget.removeClass(NO_SELECT_CLASS);
-            }
             scope.$eval(options.progress+'=value',{
               value: percent
             });
@@ -135,11 +141,19 @@
           function pointerUp(ev){
             eventTarget.off(EVENTS.move, pointerMove);
             eventTarget.off(EVENTS.end, pointerUp);
+            element.removeClass(activeClassName);
+            selectionTarget.data(NO_SELECT_COUNTER_PROP, selectionTarget.data(NO_SELECT_COUNTER_PROP)-1);
+            if(selectionTarget.data(NO_SELECT_COUNTER_PROP)===0){
+              selectionTarget.removeClass(NO_SELECT_CLASS);
+            }
             // execute expression and depending on its outcome revert progress
             // no expression = always revert progress when gesture is done
             if(options.expression && scope.$eval(options.progress)>=100){
                 if(scope.$eval(options.expression, {$reset:revertProgress})!==false) {
                   revertProgress();
+                }else{
+                  // set suspended flag so that other gesture could not be started until current one is reset
+                  element.data(SUSPEDED_PROP, true);
                 }
             } else {
               revertProgress();
@@ -152,6 +166,7 @@
                 updateOncePerFrame(0);
               })
               ctrl.suspended = false;
+              element.data(SUSPEDED_PROP, false);
           }
 
         }
