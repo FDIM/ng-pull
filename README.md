@@ -16,17 +16,10 @@ To use this pull gesture, simply add on-pull-(down|up|left|right) attribute with
 
 ```
 <div class="container items-list" on-pull-down="loadNewItems()" pull-down-distance="60" pull-down-progress="$pullDownProgress" on-pull-up="loadMoreItems($reset)" pull-up-distance="60" pull-up-progress="$pullUpProgress">
-      <div class="pull-to-refresh-indicator" ng-style="{'margin-top':($pullDownProgress/100*60)+'px'}">
-        <div>
+      <div pull-down-container>
           <div>{{$pullDownProgress|number:2}}</div>
           <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
-        </div>
       </div>
-      <!-- or -->
-      <!-- <div pull-down-container>
-          <div>{{$pullDownProgress|number:2}}</div>
-          <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
-      </div> -->
       <ul>
         <li ng-repeat="i in items" pull-left-disabled="i.disabled" on-pull-left="false" pull-left-distance="120" pull-left-reset="$cancelDelete" pull-left-progress="$pullLeftProgress" on-pull-right="archiveItem(i)" pull-right-distance="150" pull-right-disabled="i.disabled">
           <div pull-right-container>
