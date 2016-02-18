@@ -10,7 +10,7 @@
   module.service('ngPullService', ['$$rAF',PullService]);
   var FACTORIES = {
     down:{
-      canBegin: function(element) {
+      canBegin: function(element, options) {
         // stays in top
         return Math.floor(element.prop('scrollTop')) === 0;
       },
@@ -32,7 +32,7 @@
       }
     },
     up:{
-      canBegin: function(element) {
+      canBegin: function(element, options) {
         return Math.round(element.prop('scrollTop')) === Math.round(element.prop('scrollHeight') - element.prop('clientHeight'));
       },
       distance: function(newEvent, oldEvent) {
@@ -54,17 +54,18 @@
       }
     },
     left:{
-      canBegin: function(element) {
-        return Math.floor(element.prop('scrollLeft')) === 0;
+      canBegin: function(element, options) {
+        return Math.round(element.prop('scrollLeft')) === Math.round(element.prop('scrollWidth') - element.prop('clientWidth'));
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientX - newEvent.clientX;
       },
       container:{
         prepare:function(element, ctrl) {
-          element.children()[0].style.width = ctrl.options.distance + 'px';
+          element.children()[0].style.width = (ctrl.options.distance)+ 'px';
         },
         update:function(element, progress, ctrl) {
+          element[0].style.width = (progress / 100 * ctrl.options.distance)+ 'px';
           element[0].style['transform'] = progress>0?'translateX('+(-progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
         }
       },
@@ -75,8 +76,8 @@
       }
     },
     right:{
-      canBegin: function(element) {
-        return Math.round(element.prop('scrollLeft')) === Math.round(element.prop('scrollWidth') - element.prop('clientWidth')-120);
+      canBegin: function(element, options) {
+        return Math.floor(element.prop('scrollLeft')) === 0;
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientX - oldEvent.clientX;

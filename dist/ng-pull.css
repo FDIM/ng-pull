@@ -27,7 +27,7 @@
   height: 0;
   position: relative;
   overflow: hidden;
-  transition: transform ease 0.4s;
+  transition: all ease 0.4s;
 }
 .pull-up-active .pull-up-container {
   transition: none;
@@ -42,11 +42,12 @@
 .pull-left-container {
   width: 0;
   position: absolute;
-  right: 0;
+  left: 100%;
   top:0;
   bottom: 0;
   transition: transform ease 0.4s;
-  /*overflow: hidden;*/
+  transition-property: transform, width;
+  overflow: hidden;
 }
 .pull-left-active .pull-left-container {
   transition: none;
@@ -62,7 +63,6 @@
   top:0;
   bottom: 0;
   transition: transform ease 0.4s;
-  /*overflow: hidden;*/
 }
 .pull-right-active .pull-right-container {
   transition: none;

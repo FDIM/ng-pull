@@ -21,7 +21,7 @@
   module.service('ngPullService', ['$$rAF',PullService]);
   var FACTORIES = {
     down:{
-      canBegin: function(element) {
+      canBegin: function(element, options) {
         // stays in top
         return Math.floor(element.prop('scrollTop')) === 0;
       },
@@ -43,7 +43,7 @@
       }
     },
     up:{
-      canBegin: function(element) {
+      canBegin: function(element, options) {
         return Math.round(element.prop('scrollTop')) === Math.round(element.prop('scrollHeight') - element.prop('clientHeight'));
       },
       distance: function(newEvent, oldEvent) {
@@ -65,17 +65,18 @@
       }
     },
     left:{
-      canBegin: function(element) {
-        return Math.floor(element.prop('scrollLeft')) === 0;
+      canBegin: function(element, options) {
+        return Math.round(element.prop('scrollLeft')) === Math.round(element.prop('scrollWidth') - element.prop('clientWidth'));
       },
       distance: function(newEvent, oldEvent) {
         return oldEvent.clientX - newEvent.clientX;
       },
       container:{
         prepare:function(element, ctrl) {
-          element.children()[0].style.width = ctrl.options.distance + 'px';
+          element.children()[0].style.width = (ctrl.options.distance)+ 'px';
         },
         update:function(element, progress, ctrl) {
+          element[0].style.width = (progress / 100 * ctrl.options.distance)+ 'px';
           element[0].style['transform'] = progress>0?'translateX('+(-progress / 100 * ctrl.options.distance)+'px)'+TRANSLATEZ_SUFFIX:'';
         }
       },
@@ -86,8 +87,8 @@
       }
     },
     right:{
-      canBegin: function(element) {
-        return Math.round(element.prop('scrollLeft')) === Math.round(element.prop('scrollWidth') - element.prop('clientWidth')-120);
+      canBegin: function(element, options) {
+        return Math.floor(element.prop('scrollLeft')) === 0;
       },
       distance: function(newEvent, oldEvent) {
         return newEvent.clientX - oldEvent.clientX;
@@ -199,7 +200,9 @@
             scope.$watch(options.disabled, function(disabled){
               if (disabled) {
                 element.off(EVENTS.start, pointerDown);
-                revertProgress();
+                if (ctrl.suspended) {
+                  revertProgress();
+                }
               } else {
                 element.on(EVENTS.start, pointerDown);
               }
@@ -209,7 +212,7 @@
           }
 
           function pointerDown(ev) {
-            if(factory.canBegin(element) && !ctrl.suspended && (ev.which === 1 || ev.which === 0)) {
+            if((ev.which === 1 || ev.which === 0) && !ctrl.suspended && factory.canBegin(element, options) ) {
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
               initialEvent = normalizeEvent(ev);
@@ -271,23 +274,22 @@
           function pointerUp(ev){
             eventTarget.off(EVENTS.move, pointerMove);
             eventTarget.off(EVENTS.end, pointerUp);
-            element.removeClass(activeClassName);
-            selectionTarget.removeClass(NO_SELECT_CLASS);
             // execute expression and depending on its outcome revert progress
             // no expression = always revert progress when gesture is done
             if(options.expression && scope.$eval(options.progress)>=100){
                 if(scope.$eval(options.expression, {$reset:revertProgress})!==false) {
                   revertProgress();
-                  deferredUpdate(0);
                 }
             } else {
               revertProgress();
-              deferredUpdate(0);
             }
           }
           function revertProgress() {
-              //scope.$eval(options.progress+'=0');
-              deferredUpdate(0);
+              // always call updateOncePerFrame on next frame,
+              // defferedUpdate will ignore the call if one is already queued
+              pullService.$$rAF(function() {
+                updateOncePerFrame(0);
+              })
               ctrl.suspended = false;
           }
 
