@@ -61,7 +61,9 @@
             scope.$watch(options.disabled, function(disabled){
               if (disabled) {
                 element.off(EVENTS.start, pointerDown);
-                revertProgress();
+                if (ctrl.suspended) {
+                  revertProgress();
+                }
               } else {
                 element.on(EVENTS.start, pointerDown);
               }
@@ -71,7 +73,7 @@
           }
 
           function pointerDown(ev) {
-            if(factory.canBegin(element) && !ctrl.suspended && (ev.which === 1 || ev.which === 0)) {
+            if((ev.which === 1 || ev.which === 0) && !ctrl.suspended && factory.canBegin(element, options) ) {
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
               initialEvent = normalizeEvent(ev);
@@ -133,23 +135,22 @@
           function pointerUp(ev){
             eventTarget.off(EVENTS.move, pointerMove);
             eventTarget.off(EVENTS.end, pointerUp);
-            element.removeClass(activeClassName);
-            selectionTarget.removeClass(NO_SELECT_CLASS);
             // execute expression and depending on its outcome revert progress
             // no expression = always revert progress when gesture is done
             if(options.expression && scope.$eval(options.progress)>=100){
                 if(scope.$eval(options.expression, {$reset:revertProgress})!==false) {
                   revertProgress();
-                  deferredUpdate(0);
                 }
             } else {
               revertProgress();
-              deferredUpdate(0);
             }
           }
           function revertProgress() {
-              //scope.$eval(options.progress+'=0');
-              deferredUpdate(0);
+              // always call updateOncePerFrame on next frame,
+              // defferedUpdate will ignore the call if one is already queued
+              pullService.$$rAF(function() {
+                updateOncePerFrame(0);
+              })
               ctrl.suspended = false;
           }
 

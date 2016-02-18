@@ -49,13 +49,14 @@ gulp.task('dist', ['build-css'], function () {
 
 gulp.task('watch',['build'], function(){
     gulp.watch('src/**/*', ['build']);
+    gulp.watch('tests/**/*', ['unit-test']);
 });
 
 gulp.task('unit-test', function (done) {
     var _opts = {
         configFile: __dirname + '/karma.conf.js',
         singleRun: true,
-        browsers: ['PhantomJS']
+        browsers: ['PhantomJS2']
     };
 
     karma.start(_opts, done);
@@ -64,7 +65,7 @@ gulp.task('test', function (done) {
     var _opts = {
         configFile: __dirname + '/karma.conf.js',
         singleRun: true,
-        browsers: ['PhantomJS', 'Firefox', 'IE']
+        browsers: ['PhantomJS2', 'Firefox', 'IE']
     };
 
     karma.start(_opts, done);
