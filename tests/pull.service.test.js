@@ -167,4 +167,18 @@ describe('pull service', function () {
     expect(callCount).toBe(2);
   });
 
+  it("normalizeEvent should work with touch event", function(){
+    var ev = {touches:[{clientX:12, clientY:12}]};
+    service.normalizeEvent(ev);
+    expect(ev.clientX).toEqual(12);
+    expect(ev.clientY).toEqual(12);
+  });
+
+  it("normalizeEvent should work with jquery wrapper event", function(){
+    var ev = {originalEvent:{touches:[{clientX:12, clientY:12}]}};
+    service.normalizeEvent(ev);
+    expect(ev.originalEvent.clientX).toEqual(12);
+    expect(ev.originalEvent.clientY).toEqual(12);
+  });
+
 });

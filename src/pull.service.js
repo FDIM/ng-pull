@@ -106,6 +106,17 @@
   PullService.prototype.getFactory = function(direction) {
     return FACTORIES[direction];
   }
+  PullService.prototype.normalizeEvent = function(ev) {
+    // jquery
+    if(ev.originalEvent){
+      ev = ev.originalEvent;
+    }
+    if(ev.touches){
+      ev.clientX = ev.touches[0].clientX;
+      ev.clientY = ev.touches[0].clientY;
+    }
+    return ev;
+  }
   // taken from angular material: https://github.com/angular/material/blob/67e50f6e51b3e0282c086d9bb7760661c8135bbf/src/core/core.js
   PullService.prototype.invokeOncePerFrame = function(cb) {
     var queuedArgs, alreadyQueued, queueCb, context, self;
