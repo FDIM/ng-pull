@@ -40,6 +40,7 @@
         var factory = pullService.getFactory(direction);
         return {
           controller: controller,
+          controllerAs: angular.mock?'$pull'+capitalizedDirection+'Controller':undefined, // expose controller in test scenario
           link: link
         };
         function controller(){
@@ -83,7 +84,7 @@
 
               selectionTarget.data(NO_SELECT_COUNTER_PROP,selectionTarget.data(NO_SELECT_COUNTER_PROP)+1);
               selectionTarget.addClass(NO_SELECT_CLASS);
-              initialEvent = normalizeEvent(ev);
+              initialEvent = pullService.normalizeEvent(ev);
               startTime = Date.now();
               ctrl.suspended = true;
               wasMoreThanThreshold = false;
@@ -91,7 +92,7 @@
           }
 
           function pointerMove(ev){
-            var percent = factory.distance(normalizeEvent(ev), initialEvent) * 100.0 / (1.0 * options.distance);
+            var percent = factory.distance(pullService.normalizeEvent(ev), initialEvent) * 100.0 / (1.0 * options.distance);
             // cancel intention if user drags below certain threshold until timeout
             if(percent <= options.threshold && Date.now() - startTime > options.timeout && !wasMoreThanThreshold){
               eventTarget.off(EVENTS.move, pointerMove);
@@ -141,7 +142,7 @@
           }
 
           function pointerUp(ev){
-            ctrl.suspended = false; // to ensure that active class will not be added on next frame 
+            ctrl.suspended = false; // to ensure that active class will not be added on next frame
             eventTarget.off(EVENTS.move, pointerMove);
             eventTarget.off(EVENTS.end, pointerUp);
             element.removeClass(activeClassName);
@@ -186,18 +187,6 @@
       options.distance *= 1;
       options.threshold *= 1;
       return options;
-    }
-
-    function normalizeEvent(ev) {
-      // jquery
-      if(ev.originalEvent){
-        ev = ev.originalEvent;
-      }
-      if(ev.touches){
-        ev.clientX = ev.touches[0].clientX;
-        ev.clientY = ev.touches[0].clientY;
-      }
-      return ev;
     }
   }
 
