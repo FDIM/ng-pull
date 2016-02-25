@@ -20,7 +20,7 @@ To use this pull gesture, simply add on-pull-(down|up|left|right) attribute with
           <div>{{$pullDownProgress|number:2}}</div>
           <div>{{$pullDownProgress==100?'Release to request new items':'Pull down to refresh'}}</div>
       </div>
-      <ul>
+      <ul pull-target>
         <li ng-repeat="i in items" pull-left-disabled="i.disabled" on-pull-left="false" pull-left-distance="120" pull-left-reset="$cancelDelete" pull-left-progress="$pullLeftProgress" on-pull-right="archiveItem(i)" pull-right-distance="150" pull-right-disabled="i.disabled">
           <div pull-right-container>
             <p style="padding-top:20px; text-align:right;">{{$pullRightProgress|number:2}} archived</p>
