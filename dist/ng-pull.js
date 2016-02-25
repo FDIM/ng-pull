@@ -228,7 +228,7 @@
           }
 
           function pointerDown(ev) {
-            if((ev.which === 1 || ev.which === 0) && !ctrl.suspended && !element.data(SUSPEDED_PROP) && factory.canBegin(element, options) ) {
+            if((ev.button === 0 || typeof ev.button ==='undefined') && !ctrl.suspended && !element.data(SUSPEDED_PROP) && factory.canBegin(element, options) ) {
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
 
