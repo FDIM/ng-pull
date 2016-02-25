@@ -190,7 +190,7 @@
         var factory = pullService.getFactory(direction);
         return {
           controller: controller,
-          controllerAs: angular.mock?'$pull'+capitalizedDirection+'Controller':undefined, // expose controller in test scenario
+          controllerAs: '$pull'+capitalizedDirection+'Controller', // expose controller in test scenario
           link: link
         };
         function controller(){
@@ -228,7 +228,7 @@
           }
 
           function pointerDown(ev) {
-            if((ev.button === 0 || typeof ev.button ==='undefined') && !ctrl.suspended && !element.data(SUSPEDED_PROP) && factory.canBegin(element, options) ) {
+            if((ev.which === 1 || ev.which === 0) && !ctrl.suspended && !element.data(SUSPEDED_PROP) && factory.canBegin(element, options) ) {
               eventTarget.on(EVENTS.move, pointerMove);
               eventTarget.on(EVENTS.end, pointerUp);
 
