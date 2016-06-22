@@ -1,5 +1,5 @@
 {
-  "name": "ngPull",
+  "name": "ng-pull",
   "version": "1.0.0",
   "main": "dist/ng-pull.js",
   "scripts": {
